@@ -3,8 +3,3 @@ database:
   username: root
   password:
   database_name: employee_attendance
-
-app_settings:
-  debug: true
-  log_level: INFO
-  max_connections: 100
