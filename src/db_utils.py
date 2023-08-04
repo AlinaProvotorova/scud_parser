@@ -58,6 +58,15 @@ def delete_database_script():
 
 
 def process_excel_files(excel_directory):
+    sql_employee = """
+                    INSERT IGNORE INTO employee (full_name)
+                    VALUES (%s)
+                    """
+    sql_attendance = """
+                    INSERT IGNORE INTO attendance 
+                    (employee_id, work_date, arrival_time, departure_time, comment)
+                    VALUES (%s, %s, %s, %s, %s)
+                    """
     try:
         conn = mysql.connector.connect(
             host=config_db.host,
@@ -67,32 +76,37 @@ def process_excel_files(excel_directory):
         )
         cursor = conn.cursor()
         for filename in tqdm(os.listdir(excel_directory)):
-            sql_employee = """
-                INSERT IGNORE INTO employee (full_name)
-                VALUES (%s)
-                """
-            sql_attendance = """
-                INSERT IGNORE INTO attendance 
-                (employee_id, work_date, arrival_time, departure_time, comment)
-                VALUES (%s, %s, %s, %s, %s)
-                """
-            if filename.endswith(".xlsx"):
-                file_path = os.path.join(excel_directory, filename)
-                for employee, data in process_single_excel(file_path).items():
-                    cursor.execute(sql_employee, (employee,))
-                    conn.commit()
-                    employee_id = cursor.lastrowid
-                    if employee_id == 0:
-                        employee_id = get_employee_id_by_full_name(employee, cursor)
-                    for work_date, arrival_time, departure_time, comment in data:
-                        cursor.execute(
-                            sql_attendance,
-                            (
-                                employee_id, work_date, arrival_time,
-                                departure_time, comment
-                            )
+            f = os.path.join(excel_directory, filename)
+            if '.~lock.' in filename:
+                continue
+            if os.path.isfile(f):
+                if not filename.endswith('.xlsx') and not filename.endswith('.xls'):
+                    logging.debug(f"Файл {filename} пропущен, т.к. не является Exel файлом")
+                    continue
+            file_path = os.path.join(excel_directory, filename)
+
+            datas = process_single_excel(file_path, cursor)
+            if datas is None:
+                continue
+            datas, number = datas
+            sql_query = "INSERT  INTO unique_file (number) VALUES (%s)"
+            cursor.execute(sql_query, (number,))
+            conn.commit()
+            for employee, data in datas.items():
+                cursor.execute(sql_employee, (employee,))
+                conn.commit()
+                employee_id = cursor.lastrowid
+                if employee_id == 0:
+                    employee_id = get_employee_id_by_full_name(employee, cursor)
+                for work_date, arrival_time, departure_time, comment in data:
+                    cursor.execute(
+                        sql_attendance,
+                        (
+                            employee_id, work_date, arrival_time,
+                            departure_time, comment
                         )
-                        conn.commit()
+                    )
+                    conn.commit()
     except mysql.connector.ProgrammingError as err:
         if err.errno == mysql.connector.errorcode.ER_SYNTAX_ERROR:
             logging.error(f"Ошибка: {err}")
