@@ -16,4 +16,4 @@ python db_utils.py
 
 
 Cхема БД
-![img.png](img.png)
+![media/img.png](media/img.png)
