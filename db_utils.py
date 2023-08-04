@@ -1,26 +1,14 @@
 import mysql.connector
-import yaml
-import logging
 
-logging.basicConfig(
-    filename='app.log', level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
+from utils import config, logging
 
 
-def read_config():
-    with open("config.yaml", "r") as config_file:
-        config = yaml.safe_load(config_file)
-    return config
-
-
-def execute_sql_script(config):
+def execute_sql_script():
     try:
         conn = mysql.connector.connect(
-            host=config['host'],
-            user=config['username'],
-            password=config['password'],
+            host=config['database']['host'],
+            user=config['database']['username'],
+            password=config['database']['password'],
         )
 
         cursor = conn.cursor()
@@ -46,6 +34,5 @@ def execute_sql_script(config):
 
 
 if __name__ == "__main__":
-    config = read_config()
 
-    execute_sql_script(config['database'])
+    execute_sql_script()

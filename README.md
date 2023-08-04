@@ -2,19 +2,7 @@
 
 ### Приложение, выполняющее экпорт данных из excel-файлов определенного формата в реляционную СУБД.
 
-- Для создания бд нужно создать файл config.yaml в основной директории с содержимым:
-```yaml
-database:
-  host: localhost
-  username: имя пользователя
-  password: пароль
-  database_name: employee_attendance
-
-app_settings:
-  debug: true
-  log_level: INFO
-  max_connections: 100
-```
+- Для создания бд добавить username и password в config.yaml в основной директории:
 - Далее запустить файл db_utils.py:
 ```commandline
 python db_utils.py
