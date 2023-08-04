@@ -9,3 +9,11 @@ DATETIME_FORMAT = '%Y-%m-%d_%H-%M-%S'
 
 LOG_FORMAT = '"%(asctime)s - [%(levelname)s] - %(message)s"'
 
+REGEX_DATE = r"\d{2}\.\d{2}\.\d{4}"
+
+COLUMN_EMPLOYEE = 'Сотрудник'
+COLUMN_ARRIVAL = 'Вход'
+COLUMN_DEPARTURE = 'Выход'
+
+TIME_FORMAT = r"%H:%M"
+DATE_FORMAT = r"%d.%m.%Y"

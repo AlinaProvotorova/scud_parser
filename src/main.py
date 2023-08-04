@@ -1,6 +1,8 @@
 import logging
 from configs import configure_argument_parser, configure_logging
-from db_utils import process_excel_files, execute_sql_script
+from db_utils import (
+    process_excel_files, execute_sql_script, delete_database_script
+)
 
 START_LOG = 'Парсер запущен!'
 ARGS_LOG = 'Аргументы командной строки: {}'
@@ -18,6 +20,8 @@ def main():
     elif args.command == 'import':
         excel_directory = args.excel_directory
         process_excel_files(excel_directory)
+    elif args.command == 'delete_db':
+        delete_database_script()
     logging.info(FINISH_LOG)
 
 
