@@ -1,0 +1,25 @@
+import logging
+from configs import configure_argument_parser, configure_logging
+from db_utils import process_excel_files, execute_sql_script
+
+START_LOG = 'Парсер запущен!'
+ARGS_LOG = 'Аргументы командной строки: {}'
+FINISH_LOG = 'Парсер завершил работу.'
+
+
+def main():
+    configure_logging()
+    logging.info(START_LOG)
+    arg_parser = configure_argument_parser()
+    args = arg_parser.parse_args()
+    logging.info(ARGS_LOG.format(args))
+    if args.command == 'execute_db':
+        execute_sql_script()
+    elif args.command == 'import':
+        excel_directory = args.excel_directory
+        process_excel_files(excel_directory)
+    logging.info(FINISH_LOG)
+
+
+if __name__ == "__main__":
+    main()

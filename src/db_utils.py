@@ -1,6 +1,7 @@
 import mysql.connector
-
-from utils import config, logging
+import os
+from configs import config, logging
+from script_parser import process_single_excel
 
 
 def execute_sql_script():
@@ -13,7 +14,7 @@ def execute_sql_script():
 
         cursor = conn.cursor()
 
-        with open('schema.sql', 'r') as sql_file:
+        with open('../schema.sql', 'r') as sql_file:
             sql_script = sql_file.read()
 
         for statement in sql_script.split(';'):
@@ -33,6 +34,20 @@ def execute_sql_script():
             logging.info("Соединение с базой данных закрыто.")
 
 
-if __name__ == "__main__":
+def process_excel_files(excel_directory):
+    conn = mysql.connector.connect(
+        host=config['database']['host'],
+        user=config['database']['username'],
+        password=config['database']['password'],
+        database=config['database']['database_name']
+    )
+    cursor = conn.cursor()
 
-    execute_sql_script()
+    for filename in os.listdir(excel_directory):
+        if filename.endswith(".xlsx"):
+            file_path = os.path.join(excel_directory, filename)
+            process_single_excel(file_path, cursor)
+
+    conn.commit()
+    cursor.close()
+    conn.close()
