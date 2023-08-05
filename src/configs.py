@@ -1,8 +1,10 @@
 import argparse
-import yaml
 import logging
 from logging.handlers import RotatingFileHandler
-from constants import LOG_DIR, LOG_FILE, DATETIME_FORMAT, LOG_FORMAT
+
+import yaml
+
+from constants import LOG_DIR, LOG_FILE, LOG_DATETIME_FORMAT, LOG_FORMAT
 
 
 def get_config():
@@ -17,15 +19,15 @@ class ConfigDatabase:
     password: str = None
     database: str = None
 
-    def __init__(self, config_database):
-        self.host = config_database['database']['host']
-        self.user = config_database['database']['username']
-        self.password = config_database['database']['password']
-        self.database = config_database['database']['database_name']
+    def __init__(self, config):
+        self.host = config['database']['host']
+        self.user = config['database']['username']
+        self.password = config['database']['password']
+        self.database = config['database']['database_name']
 
 
-config = get_config()
-config_db = ConfigDatabase(config)
+config_database = get_config()
+config_db = ConfigDatabase(config_database)
 
 
 def configure_argument_parser():
@@ -54,7 +56,7 @@ def configure_logging():
         LOG_FILE, maxBytes=10 ** 6, backupCount=5, encoding='utf-8'
     )
     logging.basicConfig(
-        datefmt=DATETIME_FORMAT,
+        datefmt=LOG_DATETIME_FORMAT,
         format=LOG_FORMAT,
         level=logging.INFO,
         handlers=(rotating_handler, logging.StreamHandler())
