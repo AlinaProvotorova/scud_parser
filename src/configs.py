@@ -8,7 +8,7 @@ from constants import LOG_DIR, LOG_FILE, LOG_DATETIME_FORMAT, LOG_FORMAT
 
 
 def get_config():
-    with open("../config.yaml", "r") as config_file:
+    with open("../config.yaml", "r", encoding="utf-8") as config_file:
         config = yaml.safe_load(config_file)
     return config
 

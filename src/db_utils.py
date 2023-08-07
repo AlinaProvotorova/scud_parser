@@ -31,7 +31,7 @@ def execute_sql_script():
             password=config_db.password
         )
         cursor = conn.cursor()
-        with open('../schema.sql', 'r') as sql_file:
+        with open('../schema.sql', 'r', encoding='utf-8') as sql_file:
             sql_script = sql_file.read()
         for statement in sql_script.split(';'):
             if statement.strip():

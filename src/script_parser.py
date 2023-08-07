@@ -2,6 +2,7 @@ from collections import defaultdict
 from datetime import datetime
 
 import pandas as pd
+import numpy as np
 
 from constants import (
     EXCEL_COLUMN_ARRIVAL, EXCEL_COLUMN_DEPARTURE, EXCEL_COLUMN_EMPLOYEE,
@@ -36,7 +37,7 @@ def get_time_or_comment(time_data):
 
 def get_total_sum_file(df):
     df = df.apply(pd.to_datetime, errors='coerce', format=EXCEL_REGEX_TIME)
-    timestamps = df.stack().astype(int) // 10 ** 9
+    timestamps = df.stack().astype(np.int64) // 10 ** 9
     return int(timestamps.sum())
 
 
