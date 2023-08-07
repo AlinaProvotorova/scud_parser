@@ -1,3 +1,4 @@
+import re
 from collections import defaultdict
 from datetime import datetime
 
@@ -72,8 +73,14 @@ def process_employee_data(df, file_path):
                 data[EXCEL_COLUMN_DEPARTURE]
             )
             date = datetime.strptime(date, EXEL_REGEX_DATE).date()
+
+            employee = str(row[EXCEL_COLUMN_EMPLOYEE]).split(' ')
+            if not employee[-1].isalpha():
+                employee = employee[:-1]
+            employee = ' '.join(employee)
+
             employee_data.setdefault(
-                row[EXCEL_COLUMN_EMPLOYEE], []
+                employee, []
             ).append((date, arrival_time, departure_time, comment))
     return employee_data
 

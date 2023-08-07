@@ -11,7 +11,7 @@ FINISH_LOG = 'Парсер завершил работу.'
 
 
 def main():
-    # try:
+    try:
         configure_logging()
         logging.info(START_LOG)
         arg_parser = configure_argument_parser()
@@ -25,8 +25,8 @@ def main():
         elif args.command == 'delete_db':
             delete_database_script()
         logging.info(FINISH_LOG)
-    # except Exception as err:
-    #     logging.error(f'Ошибка: {err}')
+    except Exception as err:
+        logging.error(f'Ошибка: {err}')
 
 
 if __name__ == "__main__":
