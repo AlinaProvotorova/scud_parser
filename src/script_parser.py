@@ -1,4 +1,3 @@
-import re
 from collections import defaultdict
 from datetime import datetime
 
@@ -20,7 +19,7 @@ def check_number_in_unique_file(number, cursor):
     cursor.execute(sql_query, (number,))
     result = cursor.fetchone()
     if result:
-        raise ValueError(ERROR_NO_COLUMN.format(number))
+        raise ValueError(ERROR_FILE_NOT_UNIQUE)
 
 
 def get_time_or_comment(time_data):
@@ -53,6 +52,14 @@ def get_position_row(df, file_path, column):
         raise ValueError(ERROR_NO_COLUMN.format(file_path, column))
 
 
+def get_time_data(data, column_name, file_path):
+    try:
+        time_data = data[column_name]
+        return time_data
+    except KeyError:
+        raise ValueError(ERROR_NO_COLUMN.format(file_path, column_name))
+
+
 def process_employee_data(df, file_path):
     employee_column = df[EXCEL_COLUMN_EMPLOYEE].reset_index().dropna().iloc[1:]
     date_columns = df.filter(regex=EXCEL_REGEX_DATE).columns.tolist()
@@ -68,9 +75,11 @@ def process_employee_data(df, file_path):
             data = data.loc[position_row:]
             data.columns = data.iloc[0]
             data = data.loc[row['index']]
-            _, arrival_time = get_time_or_comment(data[EXCEL_COLUMN_ARRIVAL])
+            _, arrival_time = get_time_or_comment(
+                get_time_data(data, EXCEL_COLUMN_ARRIVAL, file_path)
+            )
             comment, departure_time = get_time_or_comment(
-                data[EXCEL_COLUMN_DEPARTURE]
+                get_time_data(data, EXCEL_COLUMN_DEPARTURE, file_path)
             )
             date = datetime.strptime(date, EXEL_REGEX_DATE).date()
 
